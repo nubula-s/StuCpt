@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.stucpt.mapper.CompetitionMapper">
+    <insert id="attendCompetition">
+        INSERT into cpt_score(competition_id, student_id,status)
+        values (#{competitionId}, #{studentId},#{statusNormal})
+    </insert>
+    <update id="updateCompetitionPublish">
+        update
+            cpt_competition_publish
+        SET
+            is_publish = #{isPublish}
+        where
+            competition_id = #{competitionId}
+    </update>
+
+
+    <select id="getStudent" resultType="com.stucpt.domain.entity.Student">
+        SELECT id,user_id,user_name,nick_name,college_id,major_id,email,phonenumber,sex
+        FROM cpt_student
+        where user_id= #{userId}
+    </select>
+    <select id="getCompetitionListByName" resultType="com.stucpt.domain.vo.CompetitionToFrontVo">
+        SELECT c.id,c.name,c.sign_people,c.category_id,c.limit_number,c.sponsor,cp.is_publish
+        FROM `cpt_competition` c
+                 LEFT JOIN `cpt_competition_publish` cp ON c.id = cp.competition_id
+        WHERE
+            c.del_flag = 0
+          and
+            cp.is_publish =  1
+        <if test="competitionName != null and competitionName !=''">
+            and c.name like concat('%',#{competitionName},'%')
+        </if>
+        ORDER by c.id DESC
+    </select>
+    <select id="getCompetitionPublishList" resultType="com.stucpt.domain.vo.CompetitionPublishVo">
+        SELECT c.id,c.name,c.sign_people,c.limit_number,cp.is_publish,c.is_sign,c.is_dum,c.is_grade
+        FROM `cpt_competition` c
+        LEFT JOIN `cpt_competition_publish` cp ON c.id = cp.competition_id
+        WHERE
+        c.del_flag = 0
+        <if test="name != null and name !=''">
+            and c.name like concat('%',#{name},'%')
+        </if>
+        <if test="isPublish != null and isPublish !=''">
+            and cp.is_publish = #{isPublish}
+        </if>
+    </select>
+</mapper>

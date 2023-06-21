@@ -1,0 +1,25 @@
+package com.stucpt;
+
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+/**
+ * Created with IntelliJ IDEA.
+ *
+ * @Author: sky
+ * @Date: 2023/03/16/21:06
+ * @Description:
+ */
+@SpringBootApplication
+@MapperScan("com.stucpt.mapper")
+@EnableScheduling   //定时任务注解
+@EnableSwagger2   //Swagger开启注解
+public class StuCptAdminApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(StuCptAdminApplication.class,args);
+    }
+
+}

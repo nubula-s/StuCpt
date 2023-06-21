@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.stucpt.mapper.RegistrationMapper">
+    <update id="setScoreStatus">
+        UPDATE cpt_score
+        SET status = #{isApproved}
+        WHERE registration_id = #{registrationId};
+    </update>
+    <update id="reduceSignPeople">
+        update
+        cpt_competition
+        SET
+        sign_people = sign_people - 1
+        where
+        id = #{competitionId}
+    </update>
+    <delete id="deleteRegistrationByUser">
+        delete
+        FROM cpt_registration
+        where  id = #{id}
+    </delete>
+    <delete id="deleteScore">
+        delete
+        FROM cpt_score
+        where  registration_id = #{registrationId}
+    </delete>
+    <select id="getStudent" resultType="com.stucpt.domain.entity.Student">
+        SELECT id,user_name,nick_name,college_id,major_id,email,phonenumber,sex
+        FROM cpt_student
+        where id= #{studentId}
+    </select>
+
+    <select id="getRegistrationList" resultType="com.stucpt.domain.vo.RegistrationVo">
+        SELECT sc.id,sc.competition_id,sc.student_id,c.name,st.user_name,st.nick_name,st.college_id , st.major_id,st.sex,sc.is_approved,c.is_dum,sc.create_time
+        FROM `cpt_registration` sc
+                 JOIN `cpt_competition` c ON sc.competition_id = c.id
+                 LEFT JOIN `cpt_student` st ON sc.student_id = st.id
+        WHERE
+        sc.del_flag = 0
+        <if test="name != null and name !=''">
+                and c.name  like concat('%',#{name},'%')
+            </if>
+           <if test="nickName != null and nickName !=''">
+               and  st.nick_name like concat('%',#{nickName},'%')
+           </if>
+         <if test="isApproved != null and isApproved !=''">
+             and sc.is_approved = #{isApproved}
+         </if>
+
+
+    </select>
+    <select id="getRegistrationListById" resultType="com.stucpt.domain.vo.RegistrationVo">
+        SELECT sc.id,sc.competition_id,sc.student_id,c.name,st.user_name,st.nick_name,st.college_id , st.major_id,st.sex,sc.is_approved,c.is_dum,sc.create_time
+        FROM `cpt_registration` sc
+        JOIN `cpt_competition` c ON sc.competition_id = c.id
+        LEFT JOIN `cpt_student` st ON sc.student_id = st.id
+        WHERE
+        sc.del_flag = 0
+       and st.user_id = #{userId}
+
+    </select>
+    <select id="getStudentByUserId" resultType="com.stucpt.domain.vo.RegistrationVo">
+        SELECT sc.id,sc.competition_id,sc.student_id,st.user_name,st.nick_name,st.college_id , st.major_id,st.sex,sc.is_approved,sc.create_time
+        FROM `cpt_registration` sc
+                 LEFT JOIN `cpt_student` st ON sc.student_id = st.id
+        Where
+            sc.del_flag = 0
+          and st.user_id = #{userId}
+    </select>
+
+
+</mapper>
